@@ -15,9 +15,9 @@ export default {
 <style scoped>   
 a {
     display: block;
-    padding: 1em 0;
-    width: 200px;
-    background-color: rgb(217, 63, 63);
+    padding: .75em 0;
+    width: 100px;
+    background-color: darkslategray;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -27,6 +27,6 @@ a {
 }
 a:hover,
 a:active {
-    background-color: rgb(197, 50, 50);
+    background-color: rgb(51, 104, 104);
 }
 </style>

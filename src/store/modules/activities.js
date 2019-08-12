@@ -1,12 +1,20 @@
 import Vue from 'vue';
 
 const state = {
-    activityTypes: []
+    activityTypes: [],
+    activities: [],
+    pagination: null
 };
 
 const getters = {
     activityTypes(state) {
         return state.activityTypes;
+    },
+    activities(state) {
+        return state.activities;
+    },
+    pagination(state) {
+        return state.pagination;
     }
 };
 
@@ -16,18 +24,47 @@ const mutations = {
     },
     clearActivityTypes(state) {
         state.activityTypes = [];
+    },
+    setActivities(state, activities) {
+        state.activities = activities;
+    },
+    clearActivities(state) {
+        state.activities = [];
+    },
+    setPagination(state, meta) {
+        state.pagination = meta;
+    },
+    clearPagination(state) {
+        state.pagination = null;
     }
 };
 
 const actions = {
+    searchActivities({ commit }, { page, show}) {
+        Vue.http.get('activities?page=' + page + '&show=' + show)
+            .then(res => {
+                console.log(res);
+                console.log(res.body.meta);
+                // console.log(res.body.data);
+                
+                commit('setPagination', res.body.meta)
+                commit('setActivities', res.body.data);
+            })
+            .catch(err => console.log(err));
+    },
+    repeatLastSearchActivities({ dispatch, getters }) {
+        dispatch('searchActivities', { page: getters.pagination.current_page, show: getters.pagination.per_page } );
+    },
+    clearStoredActivities({ commit }) {
+        commit('clearActivities');
+        commit('clearPagination');
+    },
     loadActivityTypes({ commit, getters }) {
         if(!getters.isUserLogged) return;
 
         Vue.http.get('activityTypes')
             .then(res => {
                 console.log("Carregando atividades");
-                // console.log(res);
-                // console.log(res.body.data);
                 
                 let activityTypes = [];
                 for (let key in res.body.data) {

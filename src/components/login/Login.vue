@@ -4,6 +4,7 @@
         <form class="login-form" @submit.prevent="login">
             <input type="email" name="email" placeholder="Email" v-model="email" required>
             <input type="password" name="password" placeholder="Senha" v-model="password" required>
+            <p class="error-message" v-if="errorOcurred">Erro na tentativa de login. Verifique se o email e a senha estão corretos.</p>
             <styled-submit-button>Entrar</styled-submit-button>
         </form>
     </div>
@@ -19,7 +20,8 @@ export default {
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            errorOcurred: false
         }
     },
     created() {
@@ -29,6 +31,8 @@ export default {
     },
     methods: {
         login() {
+            this.errorOcurred = false;
+
             const userInfo = {
                 email: this.email,
                 password: this.password
@@ -41,7 +45,10 @@ export default {
                     this.$store.dispatch('login', userInfo)
                         .then(res => res ? this.redirectToActivities() : false);
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                    console.log(err);
+                    this.errorOcurred = true;
+                });
         },
         redirectToActivities() {
             console.log('Redirecionando para a página de atividades...');
@@ -81,5 +88,8 @@ export default {
 .login-form a:hover,
 .login-form a:active {
     background-color: rgb(197, 50, 50);
+}
+.error-message {
+    color: red;
 }
 </style>

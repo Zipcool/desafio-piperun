@@ -53,7 +53,7 @@ export default {
   top: 10px;
   right: 35px;
   width: calc(100% - 130px - 70px);
-  /* background: red; */
+  margin-bottom: 30px;
 
 }
 </style>

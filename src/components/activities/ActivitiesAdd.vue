@@ -6,18 +6,23 @@
         <form class="activity-form" @submit.prevent="onSubmit">
 
             <label for="title">Título:</label>
-            <input type="text" name="title" required>
+            <input id="title" type="text" v-model="activity.title" required>
 
-            <label for="user">Responsável:</label>
-            <input type="text" name="user" required>
+            <label for="description">Descrição:</label>
+            <input id="description" type="text" v-model="activity.description">
 
-            <label for="type">Tipo:</label>
-            <select id="activity-type" v-model="activityType" required>
+            <label for="owner-id">Responsável:</label>
+            <select id="owner-id" v-model="activity.owner_id" required>
+                <option :value="currentUserInfo.id" selected="selected">{{ currentUserInfo.name }}</option>
+            </select>
+
+            <label for="activity-type">Tipo:</label>
+            <select id="activity-type" v-model="activity.activity_type" required>
                 <option v-for="type in activityTypes" :key="type.id" :value="type.id">{{ type.name }}</option>
             </select>
 
             <label for="status">Status:</label>
-            <select id="status" v-model="status" disabled required>
+            <select id="status" v-model="activity.status" disabled required>
                 <option value="0" selected="selected">Aberta</option>
                 <option value="2">Fechada</option>
             </select>
@@ -38,41 +43,93 @@ export default {
     data() {
         return {
             title: 'Nova Atividade',
-            activityType: 29512,
-            status: 0,
-            submitText: 'Cadastrar',
+            activity: {
+                // Parâmetros do formulário:
+                title: '',
+                description: '',
+                owner_id: 0,
+                activity_type: 29512,
+                status: 0,
+                
+                // Parâmetro calculado:
+                start_at: null,
+                end_at: null,
+                
+                // Parâmetros requeridos pela API:
+                priority: 0,
+                type: 0,
+                account_id: 0
+            },
+            submitText: 'Adicionar',
 
             // Variáveis de edição:
-            editMode: false,
-            activityId: null,
-            
+            editMode: false
         }
     },
     mounted() {
         console.log('ActivitiesAdd mounted chamado.');
-        if(this.$route.params.id) { // Se recebeu uma id por parâmetro na rota, habilita o modo edição
-            this.activityId = this.$route.params.id;
-            this.enableEditMode();
+        if(this.$route.params.id) { // Se receber uma id por parâmetro na rota, habilita o modo edição
+            this.enableEditMode(this.$route.params.id);
+        } else {
+            let userInfo = this.$store.getters.currentUserInfo;
+            this.activity.owner_id = userInfo.id;
+            this.activity.account_id = userInfo.account_id;
         }
     },
     computed: {
         activityTypes() {
             return this.$store.getters.activityTypes;
+        },
+        currentUserInfo() {
+            return this.$store.getters.currentUserInfo;
         }
     },
     methods: {
         onSubmit() {
-            console.log('Submitando...');
-            if(this.editMode) { // Edita
-
-            } else { // Cadastra
-
+            if(this.editMode) {
+                this.editActivity();
+            } else {
+                this.addActivity();
             }
         },
-        enableEditMode() {
+        editActivity() {
+            console.log("Editando atividade...");
+            
+            this.$http.put('activities/' + this.activity.id, { 
+                title: this.activity.title,
+                description: this.activity.description,
+                activity_type: this.activity.activity_type,
+            })
+                .then(res => {
+                    console.log(res)
+                    alert("Alterações salvas com sucesso!");
+                    this.$router.push("/atividades");
+                    this.$store.dispatch("repeatLastSearchActivities");
+                })
+                .catch(err => console.log(err));
+        },
+        addActivity() {
+            console.log("Adicionando atividade...");
+
+            let now = new Date();
+            this.activity.start_at = now;
+            this.activity.end_at = new Date(now.getTime() + 3600 * 1000); // Incrementa em uma hora
+            
+            this.$http.post('activities', this.activity)
+                .then(res => {
+                    alert("Atividade adicionada com sucesso!");
+                    this.$router.push("/atividades");
+                    this.$store.dispatch("repeatLastSearchActivities");
+                })
+                .catch(err => console.log(err));
+        },
+        enableEditMode(id) {
             this.editMode = true;
-            this.title = 'Edição de Atividade (ID: ' + this.activityId + ')';
-            this.submitText = 'Editar';
+            this.title = 'Edição de Atividade (ID: ' + id + ')';
+            this.submitText = 'Salvar Alterações';
+            
+            // Carregar dados para edição
+            this.activity = Object.assign({}, this.$store.getters.activities.find(x => x.id == id)); // O objeto original é clonado a fim de não atualizar precipitadamente a atividade na tabela, caso o usuário saia da edição sem salvar as alterações
         }
     }
 }
@@ -84,13 +141,16 @@ h2 {
 }
 .activity-form {
     text-align: center;
-    /* margin: auto; */
 }
 .activity-form input,
 .activity-form select {
     display: block;
     margin: 10px auto;
-    width: 200px;
+    width: 310px;
+}
+.inline input {
+    display: inline-block;
+    width: 150px;
 }
 .cadastrar {
     margin-top: 30px;
