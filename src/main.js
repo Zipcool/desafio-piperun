@@ -2,17 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import VueResource from 'vue-resource'
-import VueRouter from 'vue-router'
-import { routes } from './routes'
-import { store } from './store/store'
 
-Vue.use(VueResource)
+import router from './routes'
+import store from './store/store'
 
-Vue.use(VueRouter)
-const router = new VueRouter({ 
-  routes,
-  mode: 'history'
-})
+Vue.use(VueResource);
+Vue.http.options.root = 'https://api.pipe.run/v1/';
 
 new Vue({
   el: '#app',

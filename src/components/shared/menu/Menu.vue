@@ -1,21 +1,25 @@
 <template>
-    <nav v-show="isLoggedIn">
-        <ul>
-            <li><router-link to="">Pipeline</router-link></li>
-            <li><router-link to="/atividades">Atividades</router-link></li>
-            <li><router-link to="">Empresas</router-link></li>
-            <li><router-link to="">Pessoas</router-link></li>
-            <li><router-link to="">Dashboard</router-link></li>
-            <li><button @click="logout">Logout</button></li>
-        </ul>
+    <nav class="menu">
+        <h1 class="title">Desafio PipeRun</h1>
+        <div v-show="isUserLogged">
+            <router-link class="menu-item" to="/pipeline">Pipeline</router-link>
+            <router-link class="menu-item" to="/atividades">Atividades</router-link>
+            <router-link class="menu-item" to="/empresas">Empresas</router-link>
+            <router-link class="menu-item" to="/pessoas">Pessoas</router-link>
+            <router-link class="menu-item" to="/dashboard">Dashboard</router-link>
+            <div class="user-info">
+                <p>Seja bem vindo, Marcos!</p>
+                <a class="menu-item" @click="logout">Sair</a>
+            </div>
+        </div>
     </nav>
 </template>
 
 <script>
 export default {
     computed: {
-        isLoggedIn() {
-            return this.$store.getters.isLoggedIn;
+        isUserLogged() {
+            return this.$store.getters.isUserLogged;
         }
     },
     methods: {
@@ -28,29 +32,41 @@ export default {
 </script>
 
 <style scoped>
-li {
-    height: 50px;
-    width: 150px;
-    background-color: rgb(255, 70, 70);
-    color: white;
+.menu {
+    background: darkslategray;
+    padding-top: 0;
+    user-select: none;
     text-align: center;
-    align-content: center;
-    cursor: pointer;
 }
-li router-link {
-    display: block;
+
+.title {
     color: white;
+    font-weight: normal;
 }
-li button {
+
+.menu-item {
     display: block;
-    border: none;
-    background-color: transparent;
-    color: white;
-}
-a {
+    padding: 1em 0;
+    width: 100%;
+    background-color: rgb(217, 63, 63);
     color: white;
     text-decoration: none;
-    height: 100%;
-    width: 100%;
+}
+
+.menu-item:hover {
+    background-color: rgb(197, 50, 50);
+}
+
+.user-info {
+    position: absolute;
+    bottom: 30px;
+}
+
+.user-info a {
+    cursor: pointer;
+}
+
+.user-info p {
+    color: white;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <piperun-menu></piperun-menu>
-    <router-view></router-view>
+    <piperun-menu class="side-menu"></piperun-menu>
+    <div class="main-column">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -19,32 +21,35 @@ export default {
   },
   created() {
     this.$store.dispatch('verifySession')
-      .then(userIsLogged => { !userIsLogged ? this.$router.push('/') : true });
+      .then(res => { res ? true : this.$router.push('/') }); // Caso não haja nenhuma sessão de usuário, a página é redirecionada para a tela de login
   }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Lato', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  /* color: #2c3e50; */
-  margin-top: 60px;
+  margin: 0;
 }
 
-h1, h2 {
-  font-weight: normal;
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 130px;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+.main-column {
+  position: absolute;
+  top: 10px;
+  right: 35px;
+  width: calc(100% - 130px - 70px);
+  /* background: red; */
 
-li {
-  display: inline-block;
-  margin: 0 10px;
 }
 </style>
