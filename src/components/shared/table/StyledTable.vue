@@ -41,6 +41,7 @@ export default {
     .styled-table td {
         padding: 4px;
         background-color: rgb(238, 238, 238);
+        max-width: 50px;
     }
     .actions {
         width: 100px;

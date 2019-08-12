@@ -54,8 +54,6 @@ const actions = {
         localStorage.removeItem('idToken');
     },
     verifySession({ commit, dispatch }) {
-        // console.log('verifySession action chamada');
-
         const email = localStorage.getItem('email');
         const idToken = localStorage.getItem('idToken');
         if(!email || !idToken) return false;

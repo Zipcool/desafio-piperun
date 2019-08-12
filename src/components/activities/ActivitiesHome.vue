@@ -2,17 +2,15 @@
     <div>
         <router-button to="atividades/adicionar">Nova Atividade</router-button>
         <h2>Listagem de atividades</h2>
-        <p>Cada atividade deverá ter: editar, concluir e excluir</p>
-        <p>Paginar atividades de 10 em 10</p>
-        <p>Buscar por range de data</p>
-
-        <styled-button @click="updateTable">Atualizar Tabela</styled-button>
+        
+        <div class="paginationInfo" v-if="pagination">
+            <p class="left">Página {{ pagination.current_page }} de {{ pagination.total_pages }}</p>
+            <p class="right">Exibindo {{ pagination.count }} de {{ pagination.total }} resultados</p>
+        </div>
         <activities-table :activities="activitiesList"></activities-table>
-
-        <!-- <h1>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h1>
-        <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h2>
-        <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p> -->
+        <div class="pagination">
+            <styled-button @click="goToFirstPage()">Primeira</styled-button><styled-button @click="goToPreviousPage">Anterior</styled-button><styled-button @click="goToNextPage">Próxima</styled-button><styled-button @click="goToLastPage">Última</styled-button>    
+        </div>
     </div>
 </template>
 
@@ -27,22 +25,75 @@ export default {
     },
     data() {
         return {
-            activitiesList: null
+            activitiesList: null,
+            elementsPerPage: 10
         }
     },
+    computed: {
+        pagination() {
+            return this.$store.getters.pagination;
+        }
+    },
+    created() {
+        if(this.pagination) return;
+
+        this.$store.dispatch('searchActivities', { 
+            page: 1, 
+            show: this.elementsPerPage
+        });
+    },
     methods: {
-        updateTable() {
-            this.$http.get('activities')
-                .then(res => {
-                    console.log(res);
-                    console.log(res.body.data);
-                    this.activitiesList = res.body.data;
-                })
-                .catch(err => console.log(err));
+        goToFirstPage() {
+            this.updateTable(1);
+        },
+        goToPreviousPage() {
+            this.updateTable(this.pagination.current_page - 1);
+        },
+        goToNextPage() {
+            this.updateTable(this.pagination.current_page + 1);
+        },
+        goToLastPage() {
+            this.updateTable(this.pagination.total_pages);
+        },
+        updateTable(page) {
+            if(page == this.pagination.current_page || 
+               page < 1 || 
+               page > this.pagination.total_pages) return;
+
+            let now = new Date();
+
+            this.$store.dispatch('searchActivities', { 
+                page: page, 
+                show: this.elementsPerPage
+            });
         }
     }
 }
 </script>
 
 <style scoped>
+.pagination {
+    /* margin: auto; */
+    text-align: center;
+}
+.pagination a {
+    display: inline-block;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+.paginationInfo {
+    width: 100%;
+}
+.paginationInfo p {
+    display: inline-block;
+    margin: 14px 0;
+}
+.paginationInfo .left {
+    position: relative;
+    left: 10px;
+}
+.paginationInfo .right {
+    position: absolute;
+    right: 10px;
+}
 </style>

@@ -3,7 +3,7 @@ import Vue from 'vue';
 const state = {
     currentUserInfo: {
         id: null,
-        accountId: null,
+        account_id: null,
         name: null
     }
 };
@@ -17,12 +17,12 @@ const getters = {
 const mutations = {
     saveUserInfo(state, { id, account_id, name }) {
         state.currentUserInfo.id = id
-        state.currentUserInfo.accountId = account_id
+        state.currentUserInfo.account_id = account_id
         state.currentUserInfo.name = name
     },
     clearUserInfo(state) {
         state.currentUserInfo.id = null
-        state.currentUserInfo.accountId = null
+        state.currentUserInfo.account_id = null
         state.currentUserInfo.name = null
     }
 };

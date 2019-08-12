@@ -17,6 +17,7 @@ export default {
     },
     beforeDestroy() {
         this.$store.dispatch('unloadActivityTypes');
+        this.$store.dispatch('clearStoredActivities');
     }
 }
 </script>
