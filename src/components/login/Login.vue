@@ -1,20 +1,20 @@
 <template>
     <div class="login-column">
         <h1>Login</h1>
-        <form class="login-form" action="">
-            <input type="text" name="email" placeholder="Email" v-model="email" required>
+        <form class="login-form" @submit.prevent="login">
+            <input type="email" name="email" placeholder="Email" v-model="email" required>
             <input type="password" name="password" placeholder="Senha" v-model="password" required>
-            <styled-button @click="login">Entrar</styled-button>
+            <styled-submit-button>Entrar</styled-submit-button>
         </form>
     </div>
 </template>
 
 <script>
-import StyledButton from '../shared/buttons/StyledButton';
+import StyledSubmitButton from '../shared/buttons/StyledSubmitButton';
 
 export default {
     components: {
-        StyledButton
+        StyledSubmitButton
     },
     data() {
         return {
@@ -23,12 +23,8 @@ export default {
         }
     },
     created() {
-        console.log('Login.vue created chamado');
         if(this.$store.getters.isUserLogged) {
-            console.log("Usuário está logado!");
             this.redirectToActivities();
-        } else {
-            console.log("Usuário não está logado!");
         }
     },
     methods: {
@@ -38,24 +34,17 @@ export default {
                 password: this.password
             }
 
-            // todo Validar email e senha antes do login
-
-            console.log('realizando post de autenticação de usuário');
             this.$http.post('auth?email=' + encodeURI(userInfo.email) + '&password=' + encodeURI(userInfo.password))
                 .then(res => {
-                    console.log(res)
-                    console.log(res.body.data.me)
-
                     userInfo.idToken = res.body.data.me.token;
 
                     this.$store.dispatch('login', userInfo)
                         .then(res => res ? this.redirectToActivities() : false);
-                    
                 })
                 .catch(err => console.log(err));
         },
         redirectToActivities() {
-            console.log('Redirecionando para página de atividades...');
+            console.log('Redirecionando para a página de atividades...');
             this.$router.replace('/atividades');
         }
     }

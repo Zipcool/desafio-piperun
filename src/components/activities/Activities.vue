@@ -7,7 +7,17 @@
 
 <script>
 export default {
-    
+    data() {
+        return {
+            activityTypes: null
+        }
+    },
+    created() {
+        this.$store.dispatch('loadActivityTypes');
+    },
+    beforeDestroy() {
+        this.$store.dispatch('unloadActivityTypes');
+    }
 }
 </script>
 

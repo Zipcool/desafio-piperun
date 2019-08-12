@@ -1,14 +1,9 @@
 <template>
-    <router-link :to="to"><slot></slot></router-link>
+    <a @click="onClick"><slot></slot></a>
 </template>
 
 <script>
 export default {
-    props: {
-        to: {
-            required: true
-        }
-    },
     methods: {
         onClick() {
             this.$emit('click');
@@ -19,19 +14,19 @@ export default {
 
 <style scoped>   
 a {
+    font-size: .9em;
     display: inline-block;
-    padding: .7em 0;
-    width: 140px;
-    background-color: darkslategray;
+    padding: 5px 14px;
+    width: auto;
+    background-color: rgb(217, 63, 63);
     color: white;
     text-align: center;
     text-decoration: none;
-    margin: 0 5px 0 0;
     cursor: pointer;
     user-select: none;
 }
 a:hover,
 a:active {
-    background-color: rgb(51, 104, 104);
+    background-color: rgb(197, 50, 50);
 }
 </style>

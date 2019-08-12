@@ -18,7 +18,8 @@ const routes = [
     { path: '/atividades', component: Activities,
       children: [
           { path: '', component: ActivitiesHome },
-          { path: 'adicionar', component: ActivitiesAdd }
+          { path: 'adicionar', component: ActivitiesAdd },
+          { path: 'editar/:id', component: ActivitiesAdd }
       ] },
     { path: '/empresas', component: Companies },
     { path: '/dashboard', component: Dashboard },

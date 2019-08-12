@@ -8,7 +8,7 @@
             <router-link class="menu-item" to="/pessoas">Pessoas</router-link>
             <router-link class="menu-item" to="/dashboard">Dashboard</router-link>
             <div class="user-info">
-                <p>Seja bem vindo, Marcos!</p>
+                <p>Seja bem vindo, {{ userName }}!</p>
                 <a class="menu-item" @click="logout">Sair</a>
             </div>
         </div>
@@ -20,6 +20,13 @@ export default {
     computed: {
         isUserLogged() {
             return this.$store.getters.isUserLogged;
+        },
+        userName() {
+            if (this.$store.getters.currentUserInfo.name) {
+                return this.$store.getters.currentUserInfo.name.split(" ")[0];
+            } else {
+                return '';
+            }
         }
     },
     methods: {

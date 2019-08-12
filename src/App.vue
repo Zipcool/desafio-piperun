@@ -21,7 +21,11 @@ export default {
   },
   created() {
     this.$store.dispatch('verifySession')
-      .then(res => { res ? true : this.$router.push('/') }); // Caso não haja nenhuma sessão de usuário, a página é redirecionada para a tela de login
+      .then(res => { 
+        if(!res && this.$route.path != "/") {
+          this.$router.push('/') 
+        }
+      }); // Caso não haja nenhuma sessão de usuário, a página é redirecionada para a tela de login
   }
 }
 </script>
